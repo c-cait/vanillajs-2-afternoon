@@ -58,6 +58,79 @@
 </body>
 
 <script>
+//keeping track of the mouse position
+var mousePosition = {
+    x: 0,
+    y: 0,
+};
+
+//use this to keep track of when the dots should be on or off the screen
+var drawId;
+
+//fxn to handle the randomizing of the color, positioning, and size of our dots
+//takes in a min and a max numbers and return a random number between those two.
+//(given)
+function getRandomNumber(min, max) {
+  return Math.round(Math.random() * (max - min + 1)) + min;
+};
+
+//add way to listen for the mouse to move
+//then capture mouse position each time - so we know where to place our dots 
+//attaching to the window and listening for mousemove will allow us to fire a callback fxn
+//occurring anytime the mouse is moved in the browser window
+
+window.addEventListener('mousemove', function(mouseMoveEvent){
+    mousePosition.x = mouseMoveEvent.pageX;
+    mousePosition.y = mouseMoveEvent.pageY;
+})
+
+//setInterval takes 2 args.. a cb and interval in milseconds for how often we invoke the cb
+function draw() {
+    return setInterval(function(){
+        //we have a div with id=wrap we want our dots to live in this container
+        var container = document.getElementById('wrap');
+        //code to style our dots (given)
+        const color = `background:rgb(${getRandomNumber(
+            0,
+            255
+            )},${getRandomNumber(0, 255)}, ${getRandomNumber(0, 255)});`;
+            const ballSize = getRandomNumber(10, 30);
+            const size = `height:${ballSize}px; width:${ballSize}px;`;
+            const left = `left:${getRandomNumber(
+                mousePosition.x - ballSize,
+                mousePosition.x
+            )}px;`;
+            const top = `top:${getRandomNumber(
+                mousePosition.y - ballSize,
+                mousePosition.y
+            )}px; `;
+            const style = `${left}${top}${color}${size}`;
+
+        //now we need to add dots and apply our style from above.. each time our callback is executed
+        var ball = document.createElement('div'); //create div of the ball
+        ball.classList.add('ball') // add class ball to ball element
+        ball.style = style //add the styles from above(given) to the ball element
+        
+        //finally we need to add the new ball element to our container element and remove it once it's animation is done
+        ball.addEventListener('animationend', function(e){
+            e.target.remove() //callback fxn invokes and remove the element once animation done
+        });
+
+        container.appendChild(ball)
+    }, 50 );
+}
+
+//start interval -> create event listener that will listen for our mouse to move into the browser window
+
+window.addEventListener('mouseover', function(){
+   drawId = draw();
+})
+
+window.addEventListener('mouseout', function(){
+    clearInterval(drawId);
+})
+
+
 
 </script>
 
